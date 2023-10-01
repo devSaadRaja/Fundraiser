@@ -6,6 +6,17 @@ Run the following commands:
 
 ```shell
 npm install
+```
+
+#### Hardhat
+
+```shell
 npx hardhat compile
 npx hardhat test
+```
+
+#### To start React app
+
+```shell
+npm run start
 ```
