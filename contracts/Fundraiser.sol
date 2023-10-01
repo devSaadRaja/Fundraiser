@@ -5,6 +5,10 @@ import "./Project.sol";
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 
+/**
+ * @title Fundraiser
+ * @dev This contract manages user registration and project creation.
+ */
 contract Fundraiser is Ownable {
     // ==================== STRUCTURE ==================== //
 
@@ -42,26 +46,52 @@ contract Fundraiser is Ownable {
 
     // ==================== FUNCTIONS ==================== //
 
+    /**
+     * @dev Check if a user exists.
+     * @param _user The address of the user.
+     * @return true if the user exists, false otherwise.
+     */
     function userExists(address _user) external view returns (bool) {
         return registeredUsers[_user].exists;
     }
 
+    /**
+     * @dev Get all projects.
+     * @return An array of all projects.
+     */
     function getAllProjects() external view returns (Project[] memory) {
         return projects;
     }
 
+    /**
+     * @dev Get the total number of projects.
+     * @return The total number of projects.
+     */
     function getTotalProjectsCount() external view returns (uint256) {
         return projects.length;
     }
 
+    /**
+     * @dev Get all user addresses.
+     * @return An array of all user addresses.
+     */
     function getAllUserAddresses() external view returns (address[] memory) {
         return userAddresses;
     }
 
+    /**
+     * @dev Get user details.
+     * @param _user The address of the user.
+     * @return The user's details.
+     */
     function getUserDetails(address _user) external view returns (User memory) {
         return registeredUsers[_user];
     }
 
+    /**
+     * @dev Get the minimum donation amount across all projects.
+     * @return The minimum donation amount.
+     */
     function getMinAmount() external view returns (uint256) {
         uint256 minAmount;
         if (projects.length > 0) minAmount = projects[0].receivedAmount();
@@ -73,6 +103,11 @@ contract Fundraiser is Ownable {
         return minAmount;
     }
 
+    /**
+     * @dev Get the total amount donated by a user across all projects.
+     * @param _user The address of the user.
+     * @return The total amount donated by the user.
+     */
     function getUserDonatedAmount(
         address _user
     ) external view returns (uint256) {
@@ -83,6 +118,10 @@ contract Fundraiser is Ownable {
         return donatedAmount;
     }
 
+    /**
+     * @dev Get the total amount donated across all projects.
+     * @return The total amount donated.
+     */
     function getTotalDonatedAmount() external view returns (uint256) {
         uint256 totalAmount = 0;
         for (uint256 i = 0; i < projects.length; i++)
@@ -91,6 +130,14 @@ contract Fundraiser is Ownable {
         return totalAmount;
     }
 
+    /**
+     * @dev Add a new user.
+     * @param _name The name of the user.
+     * @param _userhandle The user's handle.
+     * @param _email The email of the user.
+     * @param _bio The user's bio.
+     * @param _img The URL of the user's image.
+     */
     function addUser(
         string memory _name,
         string memory _userhandle,
@@ -112,6 +159,15 @@ contract Fundraiser is Ownable {
         emit AddUser(msg.sender);
     }
 
+    /**
+     * @dev Add a new fundraising project.
+     * @param _title The title of the project.
+     * @param _description The description of the project.
+     * @param _category The category of the project.
+     * @param _projectDuration The duration of the project in seconds.
+     * @param _totalAmount The total amount to be raised.
+     * @param _headImg The URL of the project's header image.
+     */
     function addProject(
         string memory _title,
         string memory _description,

@@ -3,8 +3,10 @@ pragma solidity ^0.8.19;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-import "hardhat/console.sol";
-
+/**
+ * @title Project
+ * @dev This contract represents a fundraising project where users can donate funds.
+ */
 contract Project is Ownable {
     // ==================== STRUCTURE ==================== //
 
@@ -12,7 +14,7 @@ contract Project is Ownable {
     string public title;
     string public description;
     string public headImg;
-    uint256 public totalAmount;
+    uint256 public totalAmount; // amount to be raised
     uint256 public receivedAmount = 0;
     string public category;
     uint256 public startTime;
@@ -108,6 +110,10 @@ contract Project is Ownable {
 
     // ==================== FUNCTIONS ==================== //
 
+    /**
+     * @dev Get the current status of the project.
+     * @return The current status as a string ("active," "completed," "withdrawn," or "deleted").
+     */
     function getCurrentStatus() public view returns (string memory) {
         if (currentStatus == Statuses.Completed) return "completed";
         else if (currentStatus == Statuses.Withdrawn) return "withdrawn";
@@ -115,18 +121,33 @@ contract Project is Ownable {
         else return "active";
     }
 
+    /**
+     * @dev Get the details of a donor.
+     * @param _donor The address of the donor.
+     * @return The donor's details.
+     */
     function getDonorDetails(
         address _donor
     ) external view returns (donorDetails memory) {
         return donors[_donor];
     }
 
+    /**
+     * @dev Get the amount donated by a user.
+     * @param _user The address of the user.
+     * @return The amount donated by the user.
+     */
     function getUserDonatedAmount(
         address _user
     ) external view returns (uint256) {
         return donors[_user].amountDonated;
     }
 
+    /**
+     * @dev Get the details of the project.
+     * @return The project owner's address, donor addresses, end time, title, description, header image URL,
+     * total amount, received amount, category, and current status.
+     */
     function getProjectDetails()
         external
         view
@@ -157,6 +178,9 @@ contract Project is Ownable {
         );
     }
 
+    /**
+     * @dev Allow users to donate to the project.
+     */
     function donate() external payable isNotOwner isActive isNotCompleted {
         address user = msg.sender;
         uint256 amount = msg.value;
@@ -185,6 +209,9 @@ contract Project is Ownable {
         emit Donate(user, amount);
     }
 
+    /**
+     * @dev Allow the owner or fundraiser owner to withdraw funds from the project.
+     */
     function withdraw()
         external
         hasNotWithdrawn
@@ -217,6 +244,9 @@ contract Project is Ownable {
         emit Withdraw(amount);
     }
 
+    /**
+     * @dev Delete the project and refund donors.
+     */
     function deleteProject() external onlyOwner isActive isNotCompleted {
         for (uint256 i = 0; i < donorAddresses.length; i++) {
             address addr = donorAddresses[i];
